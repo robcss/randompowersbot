@@ -19,6 +19,7 @@ module.exports = (bot) => {
     //your bot logic
     bot.start((ctx) => {
         ctx.reply("Hello! Ready for some cool superpower?")
+        ctx.reply("Use the /roll command to get a random power")
     })
 
     bot.help((ctx) => {
