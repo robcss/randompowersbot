@@ -4,7 +4,7 @@ const { Telegraf } = require('telegraf')
 
 const token = process.env.BOT_TOKEN
 const myPort = process.env.PORT || 3000
-const url = process.env.HOOK_URL
+const botUrl = process.env.HOOK_URL
 
 const enviroment = process.env.NODE_ENV
 
@@ -25,7 +25,7 @@ const app = (botUrl) => {
 
 if (enviroment === "production") {
 
-    app(url)
+    app(botUrl)
 
 } else if (enviroment === "development") {
     const ngrok = require('ngrok');

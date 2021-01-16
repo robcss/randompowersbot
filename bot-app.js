@@ -1,4 +1,12 @@
+require('dotenv').config();
 const { Telegraf } = require('telegraf')
+const url = require("url")
+
+const getPower = require("./utils/getPower")
+
+const wikiUrl = "https://powerlisting.fandom.com/wiki/Special:Random"
+const wikiPage = process.env.NODE_ENV === "production" ? process.env.WIKI_URL : wikiUrl
+
 
 module.exports = (bot) => {
 
@@ -9,13 +17,38 @@ module.exports = (bot) => {
     })
 
     //your bot logic
-    bot.start((ctx) => ctx.reply('Welcome'))
+    bot.start((ctx) => {
+        ctx.reply("Hello! Ready for some cool superpower?")
+    })
 
-    bot.on('text', (ctx) => {
+    bot.help((ctx) => {
+        ctx.reply("Use the /roll command to get a random power")
+    })
 
-        const msg = "This is a telegram bot boileplate and everything seems to be working fine"
+    bot.command("roll", async (ctx) => {
 
-        ctx.reply(msg)
+        try {
+            const powerLink = await getPower(wikiPage)
+
+            const powerPath = url.parse(powerLink).path
+
+            let powerName = "this cool superpower"
+
+            if (powerPath) {
+                powerName = powerPath.replace("/wiki/", "").replace(/_/g, " ")
+            }
+
+            const result = `You got <b>${powerName}</b>!\n${powerLink}`
+
+            const msgId = ctx.update.message.message_id
+
+            ctx.replyWithHTML(result, { reply_to_message_id: msgId })
+
+        } catch (e) {
+            console.log(e)
+            ctx.reply(e.message, { disable_web_page_preview: true })
+        }
+
     })
 
 }
